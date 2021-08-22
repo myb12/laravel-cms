@@ -43,15 +43,7 @@ class HomeController extends Controller {
 
 
         return view("shouthome",array('status'=>$status,'avatar'=>$avatar)
-        ); /* these variables(keys) 'status','avatar' generally needs to be named according to the db field name. Table=>users, Field=>avatar, Table=> status, Field=>status. ['status'=>$status] & ['avatar'=>$avatar]sending status and avatar to blade file*/
-
-
-        // if(Friend::where('user_id',$userId)->where('friend_id',$userId)->count()==0){
-        //     $friendship = new Friend();
-        //     $friendship->user_id = $userId;
-        //     $friendship->friend_id = $userId;
-        //     $friendship->save();
-        // }
+        ); 
     }
 
     public function publicTimeline($nickname){
@@ -78,32 +70,6 @@ class HomeController extends Controller {
         }
     }
 
-    // public function publicTimeline( $nickname ) {
-    //     //return view("shouthome");
-    //     $user = User::where( 'nickname', $nickname )->first();
-    //     if ( $user ) {
-    //         $status = Status::where( 'user_id', $user->id )->orderBy( 'id', 'desc' )->get();
-    //         $avatar = empty( $user->avatar ) ? asset( 'images/avatar.jpg' ) : $user->avatar;
-    //         $name = $user->name;
-    //         $displayActions = false;
-    //         if ( Auth::check() ) {
-    //             if ( Auth::user()->id != $user->id ) {
-    //                 $displayActions = true;
-    //             }
-    //         }
-    //         return view( "shoutpublic", array(
-    //             'status'         => $status,
-    //             'avatar'         => $avatar,
-    //             'name'           => $name,
-    //             'displayActions' => $displayActions,
-    //             'friendId'       => $user->id,
-    //         ) );
-    //     } else {
-    //         return redirect( '/' );
-    //     }
-
-    // }
-
     public function saveStatus( Request $request ) {
         if ( Auth::check() ){
 
@@ -127,8 +93,8 @@ class HomeController extends Controller {
              $userModel->email = $request->post( 'email' );
              $userModel->nickname = $request->post( 'nickname' );
 
-             $profileImage = 'user' . $userModel->id . '.' . $request->image->extension(); //the name in which the image will be saved
-             $request->image->move(public_path('images'),$profileImage); //saving image
+             $profileImage = 'user' . $userModel->id . '.' . $request->image->extension();
+             $request->image->move(public_path('images'),$profileImage);
 
              $userModel->avatar = asset( "images/{$profileImage}" );
              $userModel->save();
@@ -136,22 +102,6 @@ class HomeController extends Controller {
         }
     }
 
-    // function saveProfile( Request $request ) {
-    //     if ( Auth::check() ) {
-    //         $user = Auth::user();
-    //         $user->name = $request->name;
-    //         $user->email = $request->email;
-    //         $user->nickname = $request->nickname;
-
-    //         $profileImage = 'user' . $user->id . '.' . $request->image->extension();
-    //         $request->image->move( public_path( 'images' ), $profileImage );
-
-    //         $user->avatar = asset( "images/{$profileImage}" );
-
-    //         $user->save();
-    //         return redirect()->route( 'shout.profile' );
-    //     }
-    // }
     public function profile() {
 
         return view( 'profile' );
@@ -178,25 +128,6 @@ class HomeController extends Controller {
         return redirect('shout');
     }
 
-    // public function makeFriend( $friendId ) {
-    //     $userId = Auth::user()->id;
-    //     if ( Friend::where( 'user_id', $userId )->where( 'friend_id', $friendId )->count() == 0 ) {
-    //         $friendship = new Friend();
-    //         $friendship->user_id = $userId;
-    //         $friendship->friend_id = $friendId;
-    //         $friendship->save();
-    //     }
-
-    //     if ( Friend::where( 'friend_id', $userId )->where( 'user_id', $friendId )->count() == 0 ) {
-    //         $friendship = new Friend();
-    //         $friendship->friend_id = $userId;
-    //         $friendship->user_id = $friendId;
-    //         $friendship->save();
-    //     }
-
-    //     return redirect()->route( 'shout' );
-    // }
-
     public function unFriend($friendId){
         $userId = Auth::user()->id;
 
@@ -204,12 +135,4 @@ class HomeController extends Controller {
         Friend::where('user_id',$friendId)->where('friend_id',$userId)->delete();
         return redirect('shout');
     }
-
-    // public function unFriend( $friendId ) {
-    //     $userId = Auth::user()->id;
-    //     Friend::where( 'user_id', $userId )->where( 'friend_id', $friendId )->delete();
-    //     Friend::where( 'friend_id', $userId )->where( 'user_id', $friendId )->delete();
-
-    //     return redirect()->route( 'shout' );
-    // }
 }
